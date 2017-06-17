@@ -1,0 +1,41 @@
+
+import os,sys,csv
+ 
+from PIL import Image,ImageDraw
+
+def convert_to_grayscale(imName):
+	image=Image.open(imName)
+	image=image.convert('L')
+	image.save(imName)
+
+
+def rotate_image(imName):
+	
+	image=Image.open(imName)
+	for i in range(360):
+		image1=image.rotate(i)		
+		(shortname,extension)=os.path.splitext(imName)
+		image1.save(shortname+str(i)+extension)
+	
+"""
+def save_to_csv():
+
+	 
+"""
+
+patch=os.getcwd()
+dirs=os.listdir(patch)
+
+print("Введіть назву папки")
+name_fold=input()
+
+for file in dirs:
+	if (file==name_fold)&(os.path.isdir(file)):
+		os.chdir(name_fold)
+		patch=os.getcwd()
+		dirs=os.listdir(patch)
+		for file in dirs:
+			convert_to_grayscale(file)
+			rotate_image(file)
+
+

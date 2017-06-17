@@ -1,0 +1,23 @@
+import csv 
+from PIL import Image ,ImageDraw
+
+image_data=[]
+
+name=input()
+image=Image.open(name)
+pixel=image.load()
+width,height=image.size
+
+for i in range(width):
+	for j in range(height):
+		image_data.append(pixel[i,j])
+
+csvFile=open("image.csv","w")
+csvWriter=csv.writer(csvFile)
+
+csvWriter.writerow(image_data)
+
+csvFile.close
+
+
+
