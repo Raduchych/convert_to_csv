@@ -3,39 +3,85 @@ import os,sys,csv
  
 from PIL import Image,ImageDraw
 
-def convert_to_grayscale(imName):
-	image=Image.open(imName)
-	image=image.convert('L')
-	image.save(imName)
+def ls():
+	patch=os.getcwd()
+	dirs=os.listdir(patch)
+	return dirs 
 
-
-def rotate_image(imName):
+def convert_to_grayscale(image):
 	
-	image=Image.open(imName)
-	for i in range(360):
-		image1=image.rotate(i)		
-		(shortname,extension)=os.path.splitext(imName)
-		image1.save(shortname+str(i)+extension)
-	
-"""
-def save_to_csv():
+	grayscaleImage=[]
+	for i in range(2):
+		grayscaleImage.append([])
+		for j in range(len(image[0])):
+			grayscaleImage[i].append([j])
 
-	 
-"""
+	for i in range(len(image[0])):
+		grayscaleImage[0][i]=image[0][i]
+		grayscaleImage[1][i]=image[1][i].convert('L')
+	print(grayscaleImage)	
+	return grayscaleImage
+	
+
+def rotate_image(image):	
+	
+	rotateImage=[]
+	for i in range(2):
+		rotateImage.append([])
+		for j in range(len(image[1])*360):
+			rotateImage[i].append([j])
+	
+	for i in range(len(image[0])):	
+		(shortname,extension)=os.path.splitext(image[0][i])
+		for j in range(360):
+			rotateImage[0][i*360+j]=(shortname+str(j)+extension)			
+			rotateImage[1][i*360+j]=image[1][i].rotate(j)
+	print(rotateImage)
+	return rotateImage
+
+def save_to_csv(image,patch):
+	
+	os.chdir(patch)		
+	csvFile=open("image.csv","w",newline="")
+	csvWriter=csv.writer(csvFile)
+	
+	for k in range(len(image[1])-1):
+		pixel=image[1][k].load()
+		width,height=image[1][k].size
+		imageData=[]
+		data=[]
+		for i in range(width):
+			for j in range(height):		
+				imageData.append(pixel[i,j])	
+		data=[image[0][k],imageData]
+		
+		csvWriter.writerow(data) 
+
+	csvFile.close	 
 
 patch=os.getcwd()
-dirs=os.listdir(patch)
+print("Введіть назву папки з зображеннями")
+nameFold=input()
+for file in ls():
+	if (file==nameFold)&(os.path.isdir(file)):	
+		os.chdir(nameFold)
 
-print("Введіть назву папки")
-name_fold=input()
+imageList=[]
 
-for file in dirs:
-	if (file==name_fold)&(os.path.isdir(file)):
-		os.chdir(name_fold)
-		patch=os.getcwd()
-		dirs=os.listdir(patch)
-		for file in dirs:
-			convert_to_grayscale(file)
-			rotate_image(file)
+for i in range(2):
+	imageList.append([])
+	for j in range(len(ls())):
+		imageList[i].append([j])
+
+imageName=ls()
+
+for i in range(len(imageList[0])):
+	imageList[0][i]=imageName[i]
+	imageList[1][i]=Image.open(imageName[i])
+
+imageList=convert_to_grayscale(imageList)
+imageList=rotate_image(imageList)
+save_to_csv(imageList,patch)
+
 
 
